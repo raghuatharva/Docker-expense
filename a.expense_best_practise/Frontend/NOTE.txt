@@ -1,0 +1,96 @@
+NGINX.CONF AND EXPENSE.CONF ERROR 
+------------------------------------------------
+SERVER BLOCK NEEDED IN EXPENSE.CONF FOR NGINX TO ALLOW /API LOCATIONS , IF NOT IT THROWS ERROR
+
+JUST SERVER BLOCK IS NOT ENOUGH YOU NEED MENTION WHAT IT SHOULD DO WHEN IT GOT ROOT PATH "/" AND WHICH FILE TO 
+PROVIDE FOR USER ; 
+
+
+
+DETAILS 
+-------
+
+1. **Log Analysis:**  
+   - The Nginx entrypoint scripts ran without errors, so Nginx started successfully.
+   - However, when you accessed `GET /`, Nginx tried to serve `/etc/nginx/html/index.html`
+    but couldn’t find it, resulting in a 404 error.
+
+2. **File Locations vs. Effective Root:**  
+   - You’ve verified that your static files (including `index.html`) are located in `/usr/share/nginx/html`.
+   - Yet, the error message indicates Nginx is looking in `/etc/nginx/html`. 
+   This means the server block handling the request is using `/etc/nginx/html` as its document root.
+
+3. **Configuration Details:**  
+   - Your default `nginx.conf` defines a server block (with `root /usr/share/nginx/html`) that
+    would normally serve files from `/usr/share/nginx/html`.  
+   - However, you also have a custom server block in `/etc/nginx/conf.d/expense.conf`:
+     ```nginx
+                            server {
+                                listen 80;
+                                server_name localhost;
+                            
+                                proxy_http_version 1.1;
+                            
+                                location /api/ { 
+                                    proxy_pass http://backend:8080/; 
+                                }
+                            
+                                location /health {
+                                    stub_status on;
+                                    access_log off;
+                                }
+                            }
+     ```
+     Notice that ---> this server block does not have a `root` or `index` directive**.  
+     
+   - Because of that, when a request to `/` (i.e. `GET /`) comes in, 
+   there’s no explicit instruction on where to look for static files. In this case,
+    Nginx falls back to a default built-in value—resulting in it looking 
+    at `/etc/nginx/html` (which is not where your files are).
+
+4. **Solution:**  
+   To fix this, you need to explicitly set the document root and index file(s) 
+   in your custom server block so that requests for `/` are served from `/usr/share/nginx/html`
+    where your files actually are.
+
+   **Update `/etc/nginx/conf.d/expense.conf` as follows:**
+
+                        server {
+                            listen 80;
+                            server_name localhost;
+                            
+                            # Specify the correct document root and index files:
+                            root /usr/share/nginx/html;
+                            index index.html index.htm;
+                            
+                            # Proxy configuration for API requests:
+                            location /api/ { 
+                                proxy_pass http://backend:8080/; 
+                                proxy_http_version 1.1;
+                            }
+                            
+                            location /health {
+                                stub_status on;
+                                access_log off;
+                            }
+                        }
+   
+
+5. **What This Does:**  
+   - The `root /usr/share/nginx/html;` directive tells Nginx where to find your static files.
+   - The `index index.html index.htm;` directive tells it which file to serve when the request is for `/`.
+   - The optional `location / { try_files ... }` block ensures that if a file isn’t found, Nginx returns a 404 instead of falling back to some other default.
+
+6. **After Updating:**  
+   - Reload or restart Nginx inside your container (or rebuild the container if necessary).  
+   - Test by accessing `http://localhost/` again—you should now see your `index.html` file served from `/usr/share/nginx/html`.
+
+---
+
+SUMMARY
+
+The error occurred because your custom server block in `expense.conf` didn’t define a `root`,
+ so Nginx used a default (in this case, `/etc/nginx/html`) that doesn’t contain your static files. 
+ By adding a `root /usr/share/nginx/html;` and an `index` directive, you direct Nginx to 
+ the correct location for your `index.html`, resolving the 404 error.
+

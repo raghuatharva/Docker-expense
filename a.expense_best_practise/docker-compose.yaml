@@ -1,0 +1,24 @@
+version: '3'
+volumes:
+  mysql_data:                          # docker volume create mysql_data
+networks:
+  expense:                              # docker network create expense
+services:
+  mysql:
+    image:  rohanraghu/mysql:best
+    container_name:  mysql               # --name mysql
+    volumes:
+      - mysql_data:/var/lib/mysql         # -v mysql_data:/var/lib/mysql
+  backend:
+    image:  rohanraghu/backend:best
+    container_name:  backend
+    command:  sh -c "sleep 10 && node /app/index.js"      # sleep 10 is to wait for mysql to start and run our backend can connect ; if not backens fails
+    depends_on:
+      - mysql
+  frontend:                        #you give any name here, doesnt matter ; its for reference for docker ; its not actual cont. name 
+    image:  rohanraghu/frontend:best
+    container_name:  frontend
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
