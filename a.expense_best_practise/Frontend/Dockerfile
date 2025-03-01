@@ -1,10 +1,7 @@
+# creating lot of directories is because alpine image does not have the directories
+# which nginx creates during its process run
 
-# Use valid official image
 FROM nginx:mainline-alpine3.20-slim
-
-
-# Set permissions (secure config, allow HTML access) google it !!! dont worry about itdocke
-# Set permissions (secure config, allow HTML access)
 RUN rm -rf /etc/nginx/conf.d/* && \
     rm -rf /usr/share/nginx/html && \
     rm -rf /etc/nginx/nginx.conf && \
@@ -19,17 +16,10 @@ RUN rm -rf /etc/nginx/conf.d/* && \
     chown -R nginx:nginx /var/log/nginx && \
     touch /var/run/nginx.pid && \
     chown -R nginx:nginx /var/run/nginx.pid /run/nginx.pid
-
-# Copy custom config and static files
 COPY nginx.conf /etc/nginx/nginx.conf 
 COPY expense.conf /etc/nginx/default.d/expense.conf
 COPY code /usr/share/nginx/html 
-
-# Expose port and healthcheck
 EXPOSE 80
-
-# Switch to non-root user
 USER nginx
-
 # Run in foreground
 CMD ["nginx", "-g", "daemon off;"]

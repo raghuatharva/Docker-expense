@@ -1,3 +1,10 @@
+# Key Benefits of Multi-Stage Build
+
+# ✅ Smaller Image Size – The final image doesn’t include unnecessary
+#    build dependencies (e.g., npm cache, extra packages)
+# ✅ Improved Security – Runs as a non-root user (raghu) instead of root
+# ✅ Better Performance – The image loads faster and runs efficiently
+
 FROM node:20 AS builder
 RUN mkdir -p /app
 WORKDIR /app
