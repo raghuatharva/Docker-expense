@@ -5,6 +5,8 @@ FROM nginx:mainline-alpine3.20-slim
 RUN rm -rf /etc/nginx/conf.d/* && \
     rm -rf /usr/share/nginx/html && \
     rm -rf /etc/nginx/nginx.conf && \
+    RUN apk add --no-cache libcap && \
+    RUN setcap 'cap_net_bind_service=+ep' /usr/sbin/nginx && \
     mkdir -p /var/cache/nginx/client_temp && \
     mkdir -p /var/cache/nginx/proxy_temp && \
     mkdir -p /var/cache/nginx/fastcgi_temp && \
