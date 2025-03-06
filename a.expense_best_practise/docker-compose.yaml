@@ -12,7 +12,7 @@ services:
   backend:
     image:  rohanraghu/backend:v1
     container_name:  backend
-    command:  sh -c "sleep 10 && node /app/index.js"      # sleep 10 is to wait for mysql to start and run our backend can connect ; if not backens fails
+    command:  sh -c "sleep 100 && node /app/index.js"      # sleep 10 is to wait for mysql to start and run our backend can connect ; if not backens fails
     depends_on:
       - mysql
   frontend:                        #you give any name here, doesnt matter ; its for reference for docker ; its not actual cont. name 
