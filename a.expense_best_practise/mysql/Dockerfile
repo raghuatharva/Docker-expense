@@ -3,10 +3,12 @@
 FROM mysql:8.0
 ENV MYSQL_ROOT_PASSWORD=ExpenseApp@1 
 RUN groupadd -r expense && \
-    useradd -r -g expense raghu && \
+    useradd -r -g expense expense && \
     chown -R raghu:expense /var/lib/mysql /var/run/mysqld /docker-entrypoint-initdb.d
 COPY backend.sql /docker-entrypoint-initdb.d
-USER raghu
+USER expense
+
+#user=expense is must becuase Even though you have a Linux user named expense, this ensures a matching MySQL user exists too. and expense user has all the permisions to access the mysql database --> read backend.sql and you ll know
    
 # below steps are not required because schema file itself creates 
 # MYSQL_USER=expense 
