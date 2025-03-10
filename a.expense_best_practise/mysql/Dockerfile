@@ -1,6 +1,6 @@
 # dockerfile before best practises
 
-FROM mysql:8
+FROM mysql:8.0
 ENV MYSQL_ROOT_PASSWORD=ExpenseApp@1 
 RUN groupadd -r expense && useradd -r -g expense raghu && \
     chmod -R 777 /var/lib/mysql && \
