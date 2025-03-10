@@ -4,7 +4,7 @@ FROM mysql:8.0
 ENV MYSQL_ROOT_PASSWORD=ExpenseApp@1 
 RUN groupadd -r expense && \
     useradd -r -g expense expense && \
-    chown -R raghu:expense /var/lib/mysql /var/run/mysqld /docker-entrypoint-initdb.d
+    chown -R expense:expense /var/lib/mysql /var/run/mysqld /docker-entrypoint-initdb.d
 COPY backend.sql /docker-entrypoint-initdb.d
 USER expense
 
