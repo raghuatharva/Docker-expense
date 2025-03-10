@@ -5,7 +5,7 @@ ENV MYSQL_ROOT_PASSWORD=ExpenseApp@1
 RUN groupadd expense && \
     useradd -g expense expense && \
     chown -R expense:expense /var/lib/mysql /var/run/mysqld /docker-entrypoint-initdb.d
-COPY backend.sql /docker-entrypoint-initdb.d
+ADD backend.sql /docker-entrypoint-initdb.d
 USER expense
 
 #user=expense is must becuase Even though you have a Linux user named expense, this ensures a matching MySQL user exists too. and expense user has all the permisions to access the mysql database --> read backend.sql and you ll know
