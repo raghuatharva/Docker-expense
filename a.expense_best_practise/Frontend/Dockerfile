@@ -1,5 +1,5 @@
 # creating lot of directories is because alpine image does not have the directories
-# which nginx creates during its process run
+# which nginx need during its process run ; but alpine version will not have by default 
 
 FROM nginx:mainline-alpine3.20-slim
 RUN rm -rf /etc/nginx/conf.d/* && \
