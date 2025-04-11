@@ -24,7 +24,11 @@ COPY --from=builder /app /app
 USER raghu
 CMD ["node","index.js"]
 
+# NOW RAGHU becomes the owner of /app, even though he's not root USER.
+# He can read/write/run in /app as it's owned by him.
 
+# 💡 Real-world use:
+# Non-root user owns the app directory → safer containers 🔐
 
 
 
