@@ -8,7 +8,7 @@ RUN rm -rf /etc/nginx/conf.d/default.conf
 RUN rm -rf /etc/nginx/nginx.conf
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY expense.conf /etc/nginx/default.d/expense.conf
-CMD ["nginx", "-g", "daemon off;"]
+ENTRYPOINT ["nginx", "-g", "daemon off;"]
 
 
 # 👤 You: "Yo NGINX, what's with -g daemon off;?"
